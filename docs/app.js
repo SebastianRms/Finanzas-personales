@@ -7,37 +7,42 @@ const tablaCuerpo = document.getElementById('lista-transacciones');
 const displayIngresos = document.getElementById('total-ingresos');
 const displayEgresos = document.getElementById('total-egresos');
 const displayBalance = document.getElementById('balance-total');
+const inputTipoOculto = document.getElementById('tipo'); // El input hidden que guarda el valor
 
-// --- 3. FUNCIONES DE PERSISTENCIA (LOCAL STORAGE) ---
+// --- 3. LÓGICA DE LOS BOTONES DE TIPO ---
+function seleccionarTipo(valor, elemento) {
+    // Actualizamos el valor para el formulario
+    inputTipoOculto.value = valor;
 
+    // Quitamos la clase 'active' de todos y se la damos al clicado
+    document.querySelectorAll('.btn-tipo').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    elemento.classList.add('active');
+}
+
+// --- 4. PERSISTENCIA (LOCAL STORAGE) ---
 function guardarEnStorage() {
-    // Guardamos el array convertido en texto
     localStorage.setItem('finanzas_data', JSON.stringify(transacciones));
 }
 
 function cargarDeStorage() {
     const datos = localStorage.getItem('finanzas_data');
     if (datos) {
-        // Convertimos el texto de vuelta a un array de objetos
         transacciones = JSON.parse(datos);
         renderizarApp();
     }
 }
 
-// --- 4. FUNCIÓN DE EXPORTACIÓN (CSV) ---
-
+// --- 5. EXPORTACIÓN (CSV) ---
 function exportarCSV() {
     if (transacciones.length === 0) return alert("No hay datos para exportar");
 
-    // Cabecera del CSV
     let csvContent = "Descripcion,Tipo,Monto\n";
-
-    // Unimos los datos
     transacciones.forEach(t => {
         csvContent += `${t.descripcion},${t.tipo},${t.monto}\n`;
     });
 
-    // Creamos el archivo y lo descargamos
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -47,8 +52,7 @@ function exportarCSV() {
     window.URL.revokeObjectURL(url);
 }
 
-// --- 5. LÓGICA DE NEGOCIO ---
-
+// --- 6. LÓGICA DE NEGOCIO ---
 function agregarTransaccion(descripcion, tipo, monto) {
     const nuevaTransaccion = {
         id: Date.now(),
@@ -62,7 +66,6 @@ function agregarTransaccion(descripcion, tipo, monto) {
 }
 
 function eliminarTransaccion(id) {
-    // Filtramos para quitar el ID seleccionado
     transacciones = transacciones.filter(item => item.id !== id);
     renderizarApp();
 }
@@ -86,7 +89,7 @@ function renderizarApp() {
                 ${item.tipo === 'ingreso' ? '+' : '-'}$${item.monto.toFixed(2)}
             </td>
             <td>
-                <button onclick="eliminarTransaccion(${item.id})" style="background:none; border:none; cursor:pointer;">Eliminar</button>
+                <button onclick="eliminarTransaccion(${item.id})" style="background:none; border:none; cursor:pointer; color:#94a3b8;">Eliminar</button>
             </td>
         `;
         tablaCuerpo.prepend(fila);
@@ -98,24 +101,35 @@ function renderizarApp() {
     displayBalance.textContent = `$${balanceNeto.toFixed(2)}`;
     displayBalance.style.color = balanceNeto < 0 ? "#ef4444" : "#ffffff";
 
-    // CADA VEZ QUE RENDERIZAMOS, GUARDAMOS EN EL NAVEGADOR
     guardarEnStorage();
 }
 
-// --- 6. EVENT LISTENERS ---
-
+// --- 7. EVENT LISTENERS ---
 formulario.addEventListener('submit', (e) => {
     e.preventDefault();
+    
     const desc = document.getElementById('descripcion').value;
-    const tipo = document.getElementById('tipo').value;
+    const tipoActual = inputTipoOculto.value; // Guardamos el tipo antes del reset
     const monto = document.getElementById('cantidad').value;
 
     if (desc.trim() === '' || monto <= 0) return;
 
-    agregarTransaccion(desc, tipo, monto);
+    agregarTransaccion(desc, tipoActual, monto);
+    
+    // Resetear el formulario (limpia los campos de texto)
     formulario.reset();
+
+    // --- AQUÍ RECORDAMOS LA SELECCIÓN ANTERIOR ---
+    inputTipoOculto.value = tipoActual; // Re-asignamos el tipo al input oculto
+    
+    // Buscamos el botón que tiene ese valor y le ponemos la clase activa
+    document.querySelectorAll('.btn-tipo').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.getAttribute('data-valor') === tipoActual) {
+            btn.classList.add('active');
+        }
+    });
 });
 
 // --- INICIO DE LA APP ---
-// Al cargar el script, intentamos recuperar datos previos
 cargarDeStorage();

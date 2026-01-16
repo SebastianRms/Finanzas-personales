@@ -17,19 +17,38 @@ body {
     color: #f8fafc;
     margin: 0;
     padding: 20px;
+    /* CAMBIO CLAVE: Dirección en columna para que el header esté ARRIBA */
     display: flex;
-    justify-content: center;
+    flex-direction: column; 
+    align-items: center; 
+    min-height: 100vh;
+}
+
+/* NUEVO: Estilo para el header para que haga el "salto de línea" */
+.title {
+    width: 100%;
+    max-width: 900px;
+    margin-bottom: 2rem; /* Este es el espacio (salto) entre título y formulario */
+    text-align: left;    /* Cambia a 'center' si prefieres el título al medio */
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 2.5rem;
 }
 
 main {
     max-width: 900px;
     width: 100%;
+    margin-bottom: 20px;
 }
 
-h1, h2 {
+/* Quitamos text-align center de aquí para que no afecte a todo si no quieres */
+h2 {
     text-align: center;
     font-weight: 800;
     letter-spacing: -1px;
+    margin-top: 0; /* Para que el h2 no empuje la tarjeta hacia abajo por dentro */
 }
 
 /* Estilo de Tarjetas (Glassmorphism) */
@@ -44,7 +63,8 @@ section {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-/* Formulario Innovador */
+/* ... (El resto de tu código de formulario, dashboard y tabla se mantiene igual) ... */
+
 form {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -90,7 +110,6 @@ button:hover {
     transform: translateY(-2px);
 }
 
-/* Dashboard de Impacto */
 .balance-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -108,7 +127,6 @@ button:hover {
 #total-egresos { color: var(--danger); font-size: 1.5rem; font-weight: bold; }
 #balance-total { color: #fff; font-size: 1.8rem; font-weight: 800; }
 
-/* Tabla moderna */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -129,32 +147,65 @@ td {
 
 @media (max-width: 768px) {
     body {
-        padding: 10px; /* Menos margen en los bordes */
+        padding: 10px;
     }
 
-    /* El formulario ahora será una sola columna */
     form {
         grid-template-columns: 1fr; 
         gap: 1rem;
     }
 
-    /* El Dashboard ahora apila las tarjetas de saldo */
     .balance-container {
         grid-template-columns: 1fr;
     }
 
-    /* Hacemos que la tabla sea desplazable lateralmente para que no rompa el diseño */
     #historial {
         overflow-x: auto;
     }
 
     table {
-        font-size: 0.9rem; /* Fuente un poco más pequeña en móvil */
+        font-size: 0.9rem;
     }
 
-    /* Botones más grandes para dedos (UX táctil) */
     button {
         width: 100%;
         padding: 16px;
     }
+}
+.tipo-botones-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.btn-tipo {
+    flex: 1;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--glass-border);
+    color: #94a3b8;
+    padding: 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    transform: none !important; /* Evita el brinco del hover general */
+}
+
+.btn-tipo:hover {
+    border-color: var(--primary);
+    color: white;
+}
+
+/* Estilo para el botón seleccionado */
+.btn-tipo.active[data-valor="ingreso"] {
+    background: var(--success);
+    color: white;
+    border-color: var(--success);
+    box-shadow: 0 0 15px rgba(34, 197, 94, 0.4);
+}
+
+.btn-tipo.active[data-valor="egreso"] {
+    background: var(--danger);
+    color: white;
+    border-color: var(--danger);
+    box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
 }

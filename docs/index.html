@@ -1,4 +1,4 @@
-´<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 
 <head>
@@ -10,8 +10,8 @@
 
 <body>
 
-    <header>
-        <h1>Sensei Money: Control de Finanzas</h1>
+    <header class="title">
+        <h1>Sensei Money</h1>
     </header>
 
     <main>
@@ -20,10 +20,18 @@
             <form id="finance-form">
                 <div>
                     <label for="tipo">Tipo de Movimiento:</label>
-                    <select id="tipo" name="tipo" required>
-                        <option value="ingreso">Ingreso (+)</option>
-                        <option value="egreso">Egreso (-)</option>
-                    </select>
+                    <label>Tipo de Movimiento:</label>
+                    <div class="tipo-botones-container">
+                        <input type="hidden" id="tipo" name="tipo" value="ingreso" required>
+                        <button type="button" class="btn-tipo active" data-valor="ingreso"
+                            onclick="seleccionarTipo('ingreso', this)">
+                            Ingreso (+)
+                        </button>
+                        <button type="button" class="btn-tipo" data-valor="egreso"
+                            onclick="seleccionarTipo('egreso', this)">
+                            Egreso (-)
+                        </button>
+                    </div>
                 </div>
 
                 <div>
@@ -60,10 +68,10 @@
                     <p id="balance-total">$0.00</p>
                 </article>
             </div>
-            
+
             <div style="text-align: center; margin-top: 2rem;">
                 <button onclick="exportarCSV()" style="background-color: var(--primary); padding: 10px 20px;">
-                     Exportar a Excel (CSV)
+                    Exportar a Excel (CSV)
                 </button>
             </div>
         </section>
@@ -80,7 +88,7 @@
                     </tr>
                 </thead>
                 <tbody id="lista-transacciones">
-                    </tbody>
+                </tbody>
             </table>
         </section>
     </main>
